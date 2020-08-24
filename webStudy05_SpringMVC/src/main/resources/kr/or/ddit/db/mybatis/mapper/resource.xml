@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.commons.dao.IResourceDAO">
+	<resultMap type="ResourceVO" id="resourceMap" autoMapping="true">
+		<collection property="roles" javaType="java.util.Set" ofType="string">
+			<result property="" column="ROLE_NAME"/>
+		</collection>
+	</resultMap>
+	<select id="selectResourceList" resultMap="resourceMap">
+		SELECT A.RES_ID, RES_URL, DESCRIPTION, SORT
+			  , ROLE_NAME
+		FROM RESOURCES A INNER JOIN RESOURCEROLE B ON (A.RES_ID =B.RES_ID)
+	</select>
+</mapper>

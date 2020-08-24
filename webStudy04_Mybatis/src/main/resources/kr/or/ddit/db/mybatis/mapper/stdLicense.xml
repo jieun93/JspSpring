@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.servlet03.dao.IStdLicenseDAO">
+	<insert id="insertLicenses" parameterType="DDITStudentVO"> 
+		INSERT ALL
+		<foreach collection="lic_codes" item="licCode">
+			INTO STD_LICENSE (STD_CODE, LIC_CODE) VALUES(#{code}, #{licCode})
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
+	<delete id="deleteLicenses" parameterType="string">
+		DELETE FROM STD_LICENSE WHERE STD_CODE = #{code}
+	</delete>
+</mapper>

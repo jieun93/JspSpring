@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<!-- properties 경로 설정 -->
+	<properties resource="kr/or/ddit/db/dbinfo.properties"/>
+	
+	<settings useStatementNamespaces="true"/>
+	<!-- // 공통된게 사용되는거 따로 빼놓기  -->
+	<typeAlias alias="studentVO" type="kr.or.ddit.vo.DDITStudentVO"/>
+	<typeAlias alias="memberVO" type="kr.or.ddit.vo.MemberVO"/>
+	<typeAlias alias="pagingVO" type="kr.or.ddit.vo.PagingVO"/>
+	<typeAlias alias="prodVO" type="kr.or.ddit.vo.ProdVO"/>
+	<typeAlias alias="buyerVO" type="kr.or.ddit.vo.BuyerVO"/> 
+	 <typeAlias alias="resourceVO" type="kr.or.ddit.vo.ResourceVO"/> 
+	<!-- 기본셋팅하기 -->
+	<transactionManager type="JDBC">
+		<dataSource type="DBCP">
+			<property name="driverClassName" value="${driverClassName}"/>
+			<property name="url" value="${url}"/>
+			<property name="username" value="${user}"/>
+			<property name="password" value="${password}"/>
+		</dataSource>
+	</transactionManager>
+	<!--   사용되는 xml 파일 경로 설정해놓기  -->
+		<sqlMap resource="kr/or/ddit/db/ibatis/mapper/dditStudent.xml"/>
+		<sqlMap resource="kr/or/ddit/db/ibatis/mapper/gradeAndLicense.xml"/>
+		<sqlMap resource="kr/or/ddit/db/ibatis/mapper/stdLicense.xml"/>
+		<sqlMap resource="kr/or/ddit/db/ibatis/mapper/member.xml"/>
+		 <sqlMap resource="kr/or/ddit/db/ibatis/mapper/prod.xml"/> 
+		 <sqlMap resource="kr/or/ddit/db/ibatis/mapper/buyerAndLprod.xml"/> 
+		 <sqlMap resource="kr/or/ddit/db/ibatis/mapper/resource.xml"/> 
+		
+</sqlMapConfig>

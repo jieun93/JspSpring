@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="StdLicense">
+	<!-- 학생 자격증을 따로 관리하는곳  -->
+	<!--  자격증을 추가 하는거  -->
+	<insert id="insertLicenses" parameterClass="studentVO">
+		insert all
+			<iterate property="LIC_CODES">
+			    into std_license (std_code, lic_code) values(#code#,#lic_codes[]#) 
+			</iterate>
+		select * from dual
+	</insert>
+	
+	<!--  자격증을 삭제 하는거  -->
+	<delete id="deleteLicenses" parameterClass="string">
+		delete from std_license where std_code = #code#
+	</delete>
+</sqlMap>

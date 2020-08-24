@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.buyer.dao.IBuyerDAO">
+
+<sql id="searchFrag">
+	<where>
+		<if test="searchVO != null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+			<choose>
+				<when test="'buyer_name'.equals(searchVO.searchType)">
+					buyer_name LIKE '%'|| #{searchVO.searchWord}||'%'
+				</when>
+				<when test="'buyer_add1'.equals(searchVO.searchType)">
+					buyer_add1 LIKE '%' || #{searchVO.searchWord} ||'%'
+				</when>
+				<when test="'lgu'.equals(searchVO.searchType)">
+					lprod_nm LIKE '%' || #{searchVO.searchWord} || '%'
+				</when>
+				
+				<otherwise >
+					buyer_name LIKE '%'|| #{searchVO.searchWord}||'%'
+					OR BUYER_ADD1 LIKE '%' || #{searchVO.searchWord} || '%'
+					OR LPROD_NM LIKE '%' || #{searchVO.searchWord} || '%' 
+				</otherwise>
+			</choose>
+		</if>
+	</where>
+</sql>
+
+	<select id="selectBuyerCount" resultSets="int" parameterType="PagingVO">
+		select count(*)
+		<include refid="searchFrag"/>
+	</select>
+	
+	<select id="selectBuyerList" resultSets="BuyerVO" parameterType="PagingVO">
+		SELECT B.*
+		FROM(
+			SELECT A.*, ROWNUM RNUM
+			FROM(
+			SELECT  BUYER_ID, BUYER_NAME, 
+					BUYER_LGU, BUYER_COMTEL, BUYER_FAX,
+					BUYER_MAIL, BUYER_ADD1, BUYER_ADD2,
+					LPROD_NM
+			<include refid="searchFrag"/>
+			ORDER BY BUYER_ID DESC
+		) A ) B
+		<![CDATA[
+		WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
+	</select>
+	
+	<resultMap type="BuyerVO" id="buyerMap" autoMapping="true">
+		<id property="buyer_id" column="BUYER_ID" />	
+		
+		<collection property="prodList" javaType="java.util.List" ofType="BuyerVO" autoMapping="true"/>
+				
+	</resultMap>
+	
+	<select id="selectBuyer" resultMap="buyerMap" parameterType="string">
+		select buyer.*,
+       			prod_id, 	prod_name,  prod_lgu,
+       			prod_buyer,	prod_cost, 	prod_price
+		  from 	buyer left outer join prod on(buyer_id = prod_buyer)
+		 where 	buyer_id = #{buyer_id}
+	</select>
+	
+	<insert id="insertBuyer" parameterType="BuyerVO">
+	
+		<selectKey keyProperty="buyer_id" resultType="string"> <!-- 자동으로 ID 번호를 생성하는거 --> 
+				SELECT #{buyer_id} || LPAD( NVL(TO_NUMBER(SUBSTR(MAX(BUYER_ID), LENGTH(#{buyer_id})+1))+1, 0) , 2, '0')
+				  FROM BUYER
+				 WHERE BUYER_LGU = #{buyer_id}
+				  
+		</selectKey>
+		 insert into buyer
+		 		(buyer_id, buyer_name, buyer_lgu, buyer_comtel,
+		 		 buyer_fax, buyer_mail, buyer_add1, buyer_add2)
+		 values(#{buyer_id}, #{buyer_name}, #{buyer_lgu}, #{buyer_comtel},
+		 		 #{buyer_fax}, #{buyer_mail}, #{buyer_add1}, #{buyer_add2})
+		
+	</insert>
+
+ <update id="updateBuyer" parameterType="BuyerVO">
+		UPDATE buyer
+	    SET
+	    buyer_name		=		#{buyer_name,jdbcType=VARCHAR} ,
+	    buyer_bank		=		#{buyer_bank,jdbcType=VARCHAR} ,
+	    buyer_bankno	=		#{buyer_bankno,jdbcType=VARCHAR} ,
+	    buyer_bankname	=		#{buyer_bankname,jdbcType=VARCHAR} ,
+	    buyer_zip		=		#{buyer_zip,jdbcType=VARCHAR} ,
+	    buyer_add1		=		#{buyer_add1,jdbcType=VARCHAR} ,
+	    buyer_add2		=		#{buyer_add2,jdbcType=VARCHAR} ,
+	    buyer_comtel	=		#{buyer_comtel,jdbcType=VARCHAR} ,
+	    buyer_fax		=		#{buyer_fax,jdbcType=VARCHAR} ,
+	    buyer_mail		=		#{buyer_mail,jdbcType=VARCHAR} ,
+	    buyer_charger	=		#{buyer_charger,jdbcType=VARCHAR} ,
+	    buyer_telext	=		#{buyer_telext,jdbcType=VARCHAR}
+		WHERE  buyer_id	=		#{buyer_id}
+	</update>
+</mapper>
